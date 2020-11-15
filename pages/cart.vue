@@ -2,7 +2,7 @@
     <main class="container cart">
         <h2>Cart</h2>
 
-        <section>
+        <section v-if="cartCount > 0">
             <table>
                 <tr>
                     <thead>
@@ -37,12 +37,15 @@
                 </tr>
             </table>
         </section>
+        <section v-else>
+            <AppEmptyCart />
+        </section>
     </main>
 </template>
 
 <script>
 import { mapState, mapGetters } from 'vuex';
-
+import AppEmptyCart from '@/components/AppEmptyCart.vue';
 export default {
     computed: {
         ...mapState([
@@ -50,6 +53,7 @@ export default {
         ]),
         ...mapGetters([
             'totalPrice',
+            'cartCount',
         ])
     },
 };
