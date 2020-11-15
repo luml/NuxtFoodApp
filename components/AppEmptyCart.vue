@@ -1,8 +1,8 @@
 <template>
     <section v-show="cartCount === 0" class="emptycart">
         <svg 
-            height='100px' 
-            width='100px'  
+            height='200' 
+            width='200'  
             fill="#000000" 
             xmlns:x="http://ns.adobe.com/Extensibility/1.0/" 
             xmlns:i="http://ns.adobe.com/AdobeIllustrator/10.0/" 
@@ -13,8 +13,12 @@
             x="0px" 
             y="0px" 
             viewBox="-949 951 100 100" 
-            style="enable-background:new -949 951 100 100;" 
-            xml:space="preserve">
+            style="enable-background:new -949 951 100 100;"
+            xml:space="preserve"
+            aria-labelledby="hungry"
+            role="presentation"
+            >
+            <title id="hungry">hungry man icon</title>
             <g>
                 <g i:extraneous="self">
                     <g>

@@ -19,7 +19,12 @@
           <h3>Options</h3>
         </legend>
         <div v-for="option in currentItem.options" :key="option">
-          <input type="radio" name="option" :id="option" :value="option" v-model="itemOptions" />
+          <input 
+            type="radio" 
+            name="option" 
+            :id="option" 
+            :value="option" 
+            v-model="$v.itemOptions.$model" />
           <label :for="option">{{ option }}</label>
         </div>
       </fieldset>
@@ -29,7 +34,11 @@
           <h3>Add Ons</h3>
         </legend>
         <div v-for="addon in currentItem.addOns" :key="addon">
-          <input type="checkbox" name="addon" :id="addon" :value="addon" v-model="itemAddons" />
+          <input 
+            type="checkbox" 
+            name="addon" 
+            :id="addon" 
+            :value="addon" v-model="$v.itemAddons.$model" />
           <label :for="addon">{{ addon }}</label>
         </div>
       </fieldset>
@@ -51,6 +60,7 @@
 <script>
 import { mapState } from "vuex";
 import AppToast from "@/components/AppToast.vue";
+import { required } from 'vuelidate/lib/validators';
 
 export default {
   components: {
@@ -63,8 +73,17 @@ export default {
       itemOptions: "",
       itemAddons: [],
       itemSizeAndCost: [],
-      cartSubmitted: false
+      cartSubmitted: false,
+      errors: false,
     };
+  },
+  validations: {
+    itemOptions: {
+      required,
+    },
+    itemAddons: {
+      required,
+    }
   },
   computed: {
     ...mapState(["fooddata"]),
@@ -94,8 +113,17 @@ export default {
         addOns: this.itemAddons,
         combinedPrice: this.combinedPrice
       };
-      this.cartSubmitted = true;
-      this.$store.commit("addToCart", formOutput);
+
+      let addOnError = this.$v.itemAddons.$invalid
+      let optionError = this.currentItem.options ? this.$v.itemOptions.$invalid : false
+
+      if (addOnError || optionError) {
+        this.errors = true
+      } else {
+        this.errors = false
+        this.cartSubmitted = true
+        this.$store.commit("addToCart", formOutput)
+      }
     }
   }
 };
