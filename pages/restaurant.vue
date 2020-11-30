@@ -1,5 +1,5 @@
 <template>
-  <main class="container restaurrant">
+  <main class="container restaurant">
     <div class="restaurantheading">
       <h1>Restaurants</h1>
       <AppSelect @change="selectedResaurant = $event" />
