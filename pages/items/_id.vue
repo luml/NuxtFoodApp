@@ -1,7 +1,7 @@
 <template>
   <main class="container">
-    <section 
-        class="image" 
+    <section
+        class="image"
         :style="`background: url(/${currentItem.img}) no-repeat center center`">
     </section>
 
@@ -19,29 +19,34 @@
           <h3>Options</h3>
         </legend>
         <div v-for="option in currentItem.options" :key="option">
-          <input 
-            type="radio" 
-            name="option" 
-            :id="option" 
-            :value="option" 
+          <input
+            type="radio"
+            name="option"
+            :id="option"
+            :value="option"
             v-model="$v.itemOptions.$model" />
           <label :for="option">{{ option }}</label>
         </div>
       </fieldset>
+
+      <div class="error" v-if="!$v.itemOptions.required">Options is required</div>
 
       <fieldset v-if="currentItem.addOns">
         <legend>
           <h3>Add Ons</h3>
         </legend>
         <div v-for="addon in currentItem.addOns" :key="addon">
-          <input 
-            type="checkbox" 
-            name="addon" 
-            :id="addon" 
+          <input
+            type="checkbox"
+            name="addon"
+            :id="addon"
             :value="addon" v-model="$v.itemAddons.$model" />
           <label :for="addon">{{ addon }}</label>
         </div>
       </fieldset>
+
+      <div class="error" v-if="!$v.itemAddons.required">Addons is required</div>
+      <div class="error" v-if="!$v.itemAddons.minLength">Two addons at least</div>
 
       <app-toast v-if="cartSubmitted">
         Order submitted
@@ -60,7 +65,7 @@
 <script>
 import { mapState } from "vuex";
 import AppToast from "@/components/AppToast.vue";
-import { required } from 'vuelidate/lib/validators';
+import { required, minLength } from 'vuelidate/lib/validators';
 
 export default {
   components: {
@@ -83,6 +88,7 @@ export default {
     },
     itemAddons: {
       required,
+      minLength: minLength(2),
     }
   },
   computed: {
@@ -113,12 +119,17 @@ export default {
         addOns: this.itemAddons,
         combinedPrice: this.combinedPrice
       };
-
       let addOnError = this.$v.itemAddons.$invalid
       let optionError = this.currentItem.options ? this.$v.itemOptions.$invalid : false
 
       if (addOnError || optionError) {
         this.errors = true
+        if (addOnError) {
+          this.$v.itemAddons.$touch()
+        } else {
+          this.$v.itemOptions.$touch()
+        }
+        this.$v.itemAddons.$touch()
       } else {
         this.errors = false
         this.cartSubmitted = true
@@ -147,6 +158,10 @@ export default {
 .details {
   grid-area: 1 / 2 / 2 / 3;
   position: relative;
+
+  .error {
+    color: red
+  }
 }
 .options {
   grid-area: 2 / 1 / 3 / 2;
