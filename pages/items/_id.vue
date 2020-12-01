@@ -11,7 +11,10 @@
 
       <div class="quantity">
         <input type="number" min="1" v-model="count" />
-        <button class="primary" @click="addToCard">Add to cart - ${{combinedPrice}}</button>
+        <button
+          class="primary"
+          :disabled="errors === true"
+          @click="addToCard">Add to cart - ${{combinedPrice}}</button>
       </div>
 
       <fieldset v-if="currentItem.options">
@@ -29,7 +32,7 @@
         </div>
       </fieldset>
 
-      <div class="error" v-if="!$v.itemOptions.required">Options is required</div>
+      <div class="error" v-if="currentItem.options && !$v.itemOptions.required">Options is required</div>
 
       <fieldset v-if="currentItem.addOns">
         <legend>
@@ -45,8 +48,8 @@
         </div>
       </fieldset>
 
-      <div class="error" v-if="!$v.itemAddons.required">Addons is required</div>
-      <div class="error" v-if="!$v.itemAddons.minLength">Two addons at least</div>
+      <div class="error" v-if="currentItem.addOns && !$v.itemAddons.required">Addons is required</div>
+      <div class="error" v-if="currentItem.addOns && !$v.itemAddons.minLength">Two addons at least</div>
 
       <app-toast v-if="cartSubmitted">
         Order submitted
@@ -55,21 +58,20 @@
       </app-toast>
     </section>
 
-    <section class="options">
-      <h3>Description</h3>
-      <p>{{ currentItem.description }}</p>
-    </section>
+    <restaurant-detail></restaurant-detail>
   </main>
 </template>
 
 <script>
 import { mapState } from "vuex";
 import AppToast from "@/components/AppToast.vue";
+import RestaurantDetail from '@/components/RestaurantDetail.vue';
 import { required, minLength } from 'vuelidate/lib/validators';
 
 export default {
   components: {
-    AppToast
+    AppToast,
+    RestaurantDetail,
   },
   data() {
     return {
